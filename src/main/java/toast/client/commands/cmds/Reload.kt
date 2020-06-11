@@ -14,9 +14,7 @@ class Reload : Command("Reload", """${ToastClient.cmdPrefix}reload [config]""", 
             ToastClient.CONFIG_MANAGER.loadConfig()
             ToastClient.CONFIG_MANAGER.loadKeyBinds()
             ToastClient.CONFIG_MANAGER.loadModules()
-            if (ToastClient.clickGuiHasOpened) {
-                ToastClient.clickGui.reloadConfig()
-            }
+            //ToastClient.clickGui.reloadConfig()
             Logger.message("Reloaded all configuration files.", Logger.INFO, true)
         } else {
             when (args[0]) {
@@ -32,11 +30,9 @@ class Reload : Command("Reload", """${ToastClient.cmdPrefix}reload [config]""", 
                     ToastClient.CONFIG_MANAGER.loadKeyBinds()
                     Logger.message("Reloaded keybinds.", Logger.INFO, true)
                 }
-                "clickgui" -> if (ToastClient.clickGuiHasOpened) {
-                    ToastClient.clickGui.reloadConfig()
-                } else {
-                    Logger.message("ClickGUI hasn't been opened yet", Logger.ERR, true)
-                }
+                "clickgui" ->
+                    //ToastClient.clickGui.reloadConfig()
+                    Logger.message("ClickGui is being rewritten, nothing to reload.", Logger.INFO, true)
                 else -> {
                     Logger.message("Invalid argument, valid arguments are:", Logger.WARN, true)
                     Logger.message("${Formatting.GRAY}  modules ${Formatting.YELLOW}reloads the enabled state of modules", Logger.EMPTY, true)

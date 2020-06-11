@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient
 import org.lwjgl.glfw.GLFW
 import toast.client.ToastClient
 import toast.client.ToastClient.FILE_MANAGER
+import toast.client.gui.clickgui.ClickGuiPositions
 import toast.client.modules.config.Setting
 import java.io.File
 import java.io.FileNotFoundException
@@ -208,6 +209,16 @@ class ConfigManager {
          * Name of the file where the JSON containing macros is stored
          */
         const val macrosFile: String = "toastclient/macros.json"
+
+        /**
+         * Name of the file where the JSON containing ClickGUI positions is stored
+         */
+        const val clickguiFile: String = "toastclient/clickgui.json"
+
+        /**
+         * ClickGuiPositions class
+         */
+        val clickGuiPositions = ClickGuiPositions()
 
         /**
          * Map containing macros and the keys they are bound to

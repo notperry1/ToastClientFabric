@@ -3,6 +3,7 @@ package toast.client.utils
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.hud.InGameHud
+import java.awt.Color
 
 /**
  * A set of utilities for drawing things on screen on a 2D plane
@@ -53,9 +54,9 @@ object TwoDRenderUtils {
      */
     @JvmStatic
     fun drawHollowRect(x: Int, y: Int, width: Int, height: Int, lW: Int, color: Int) {
-        drawRect(x - lW, y - lW, width + lW * 2, lW, color) // top line
-        drawRect(x - lW, y, lW, height, color) // left line
-        drawRect(x - lW, y + height, width + lW * 2, lW, color) // bottom line
+        drawRect(x, y, width, lW, color) // top line
+        drawRect(x, y, lW, height, color) // left line
+        drawRect(x, y + height, width + lW, lW, color) // bottom line
         drawRect(x + width, y, lW, height, color) // right line
     }
 
@@ -86,10 +87,34 @@ object TwoDRenderUtils {
             prefix: String?,
             text: String?
     ) {
-        drawRect(x - 2, y - 2, width, height, bgColor)
-        drawHollowRect(x - 2, y - 2, width, height, 1, color)
-        drawText(prefix, x, y, prefixColor)
-        drawText(text, x + textRenderer.getStringWidth(prefix), y, textColor)
+        drawRect(x + 1, y + 1, width - 1, height - 1, bgColor)
+        drawHollowRect(x, y, width, height, 1, color)
+        drawText(prefix, x + 4, y + 4, prefixColor)
+        drawText(text, x + textRenderer.getStringWidth(prefix) + 1, y + 4, textColor)
+    }
+
+    /**
+     * Draw a text box at the given coordinates with predefined colors
+     *
+     * @param x           X coordinate of the top left corner of the inside of the text box
+     * @param y           Y coordinate of the top left corner of the inside of the text box
+     * @param width       Width of the inside of the box
+     * @param height      Height of the inside of the box
+     * @param prefix      Text to prepend to the main text
+     * @param text        Main text to put in the box
+     */
+    @JvmStatic
+    fun drawTextBox(
+            x: Int,
+            y: Int,
+            width: Int,
+            height: Int,
+            background: Boolean,
+            prefix: String?,
+            text: String?
+    ) {
+        val bgColor = if (background) Color(0, 0, 0, 64).rgb else Color(0, 0, 0, 0).rgb
+        drawTextBox(x, y, width, height, Color(0, 0, 0, 255).rgb, Color(255, 255, 255, 255).rgb, Color(8, 189, 8, 255).rgb, bgColor, prefix, text)
     }
 
     /**

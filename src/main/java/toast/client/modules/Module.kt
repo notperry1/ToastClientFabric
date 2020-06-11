@@ -11,37 +11,33 @@ import toast.client.modules.config.ModuleSettings
  */
 @Environment(EnvType.CLIENT)
 open class Module(
-    /**
-     * The name of the module
-     */
-    var name: String,
+        /**
+         * The name of the module
+         */
+        var name: String,
 
-    /**
-     * A brief description of what the module does
-     */
-    var description: String,
+        /**
+         * A brief description of what the module does
+         */
+        var description: String,
 
-    /**
-     * The category the module should appear in
-     */
-    var category: Category,
+        /**
+         * The category the module should appear in
+         */
+        var category: Category,
 
-    /**
-     * What key-bind the module should have by default
-     */
-    var key: Int
+        /**
+         * What key-bind the module should have by default
+         */
+        var key: Int
 ) {
-    /**
-     *
-     */
-
     /**
      * Variable containing the module's configuration options
      */
     var settings: ModuleSettings = ModuleSettings()
 
     /**
-     * Shorthand definition for minecraft instance
+     * Shorthand accessor for the current minecraft instance
      */
     var mc: MinecraftClient = MinecraftClient.getInstance()
 

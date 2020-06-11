@@ -27,7 +27,7 @@ class Bind : Command("Bind", "${ToastClient.cmdPrefix}bind [all, module] [key]",
                     }
                 }
             } else if (module != null) {
-                var keyCode = -1;
+                val keyCode: Int
                 if (args[1].toLowerCase() == "none") {
                     keyCode = -1
                 } else {

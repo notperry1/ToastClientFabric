@@ -6,7 +6,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Formatting;
 import toast.client.commands.CommandHandler;
-import toast.client.gui.clickgui.ClickGuiScreen;
 import toast.client.modules.ModuleManager;
 import toast.client.utils.*;
 
@@ -25,16 +24,11 @@ public class ToastClient implements ModInitializer {
     public static CommandHandler COMMAND_HANDLER = new CommandHandler();
     public static ConfigManager CONFIG_MANAGER = new ConfigManager();
     public static FileManager FILE_MANAGER = new FileManager();
-    public static ClickGuiScreen clickGui;
-    public static Boolean clickGuiHasOpened;
     public static EventBus eventBus = new EventBus();
 
 
     @Override
     public void onInitialize() {
-        if (clickGui == null) {
-            clickGuiHasOpened = false;
-        }
         RandomMOTD.addMOTDS();
         ASCII.printFancyConsoleMSG();
         FILE_MANAGER.initFileManager();
