@@ -18,25 +18,41 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
     private var dragDeltaY = 0.0
     private var mouseIsDragging = false
     private var clickedOnce = false
+    private var released = false
+    private var didDrag = false
 
     /**
      * Renders everything
      */
     override fun render(mouseX: Int, mouseY: Int, delta: Float) {
-        for (category in categories) {
+        loop@ for (category in categories) {
             category.render()
-            if (pressedOnCategory && !mouseIsDragging && !clickedOnce) {
-                (clickGuiPositions.positions[category.category]
-                        ?: return).expanded = !(clickGuiPositions.positions[category.category]?.expanded ?: return)
-                clickedOnce = true
-            } else if (pressedOnCategory && mouseIsDragging && catPressedOn == category.category) {
-                category.x += dragDeltaX
-                category.y += dragDeltaY
-                ((clickGuiPositions.positions[category.category]) ?: continue).x = category.x
-                (clickGuiPositions.positions[category.category] ?: continue).y = category.y
-                category.updateSubComponentsPos(dragDeltaX, dragDeltaY)
-                dragDeltaY = 0.0
-                dragDeltaX = 0.0
+            if (pressedOnCategory && catPressedOn == category.category) {
+                when {
+                    mouseIsDragging -> {
+                        category.x += dragDeltaX
+                        category.y += dragDeltaY
+                        ((clickGuiPositions.positions[category.category]) ?: continue@loop).x = category.x
+                        (clickGuiPositions.positions[category.category] ?: continue@loop).y = category.y
+                        category.updateSubComponentsPos(dragDeltaX, dragDeltaY)
+                        println("Dragged ${category.category.name}")
+                        didDrag = true
+                        dragDeltaY = 0.0
+                        dragDeltaX = 0.0
+                    }
+                    released && !clickedOnce && !didDrag -> {
+                        (clickGuiPositions.positions[category.category]
+                                ?: return).expanded = !(clickGuiPositions.positions[category.category]?.expanded
+                                ?: return)
+                        released = false
+                        clickedOnce = true
+                        println("Clicked on ${category.category.name}")
+                    }
+                    released && didDrag -> {
+                        didDrag = false
+                        released = false
+                    }
+                }
             }
         }
     }
@@ -49,6 +65,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
             for (category in categories) if (category.isMouseOver(mouseX, mouseY)) {
                 catPressedOn = category.category
                 pressedOnCategory = true
+                clickedOnce = false
             }
         }
         return true
@@ -62,6 +79,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
             dragDeltaX = deltaX
             dragDeltaY = deltaY
             mouseIsDragging = true
+            didDrag = true
         }
         return true
     }
@@ -70,12 +88,10 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
      * Executes when mouse is released
      */
     override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        pressedOnCategory = false
-        catPressedOn = null
         mouseIsDragging = false
         dragDeltaY = 0.0
         dragDeltaX = 0.0
-        clickedOnce = false
+        released = true
         return true
     }
 
