@@ -80,7 +80,7 @@ abstract class Component {
     /**
      * Function to get the component at a coordinate on screen
      */
-    private fun getSubComponentAtCoords(x: Double, y: Double): Component? {
+    fun getSubComponentAtCoords(x: Double, y: Double): Component? {
         var answer: Component? = null
         for (comp in subComponents) {
             if (x >= comp.x && y >= comp.y && x <= comp.x + comp.width && y <= comp.y + comp.height) {

@@ -4,6 +4,9 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.LiteralText
 import org.lwjgl.glfw.GLFW
 import toast.client.gui.clickgui.component.components.ComponentCategory
+import toast.client.gui.clickgui.component.components.ComponentMode
+import toast.client.gui.clickgui.component.components.ComponentModule
+import toast.client.gui.clickgui.component.components.ComponentToggle
 import toast.client.modules.Module
 import toast.client.utils.ConfigManager.Companion.clickGuiPositions
 
@@ -61,11 +64,44 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
      * Executes when mouse is clicked
      */
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            for (category in categories) if (category.isMouseOver(mouseX, mouseY)) {
+        var foundCat = false
+        for (category in categories) if (category.isMouseOver(mouseX, mouseY)) {
+            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
                 catPressedOn = category.category
                 pressedOnCategory = true
                 clickedOnce = false
+                foundCat = true
+            }
+        }
+        if (!foundCat) {
+            loop@ for (category in categories) {
+                val component = category.getSubComponentAtCoords(mouseX, mouseY)
+                if (component != null) {
+                    when (component) {
+                        is ComponentModule -> {
+                            when (button) {
+                                GLFW.GLFW_MOUSE_BUTTON_RIGHT -> {
+                                    var state = clickGuiPositions.positions[category.category]!!.expandedModule[component.module.name]
+                                    state = if (state == null) true else !state
+                                    clickGuiPositions.positions[category.category]!!.expandedModule[component.module.name] = state
+                                    category.generatePositions()
+                                }
+                                GLFW.GLFW_MOUSE_BUTTON_LEFT -> {
+                                    component.module.toggle()
+                                }
+                            }
+                        }
+                        is ComponentToggle -> {
+                            val state = component.setting.enabled ?: break@loop
+                            component.setting.enabled = !state
+                        }
+                        is ComponentMode -> {
+                            val modes = component.settingDef.modes ?: break@loop
+                            val mode = component.setting.mode ?: break@loop
+                            if (modes.indexOf(mode) == modes.size - 1) component.setting.mode = modes[0] else component.setting.mode = modes[modes.indexOf(mode)]
+                        }
+                    }
+                }
             }
         }
         return true

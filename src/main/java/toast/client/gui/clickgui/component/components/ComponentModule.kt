@@ -12,6 +12,10 @@ class ComponentModule(override var x: Double, override var y: Double, override v
                        * Module to render
                        */
                       var module: Module, override var width: Double) : Component() {
+    /**
+     * The total height of the module
+     */
+    var totalHeight: Double = height
 
     override fun render() {
         drawBox("> ", module.name)
@@ -26,16 +30,19 @@ class ComponentModule(override var x: Double, override var y: Double, override v
     }
 
     init {
-        var currentY = y + height
-        loop@ for ((settingName, setting) in module.settings.settings) {
-            val settingComponent = when (setting.type) {
-                0 -> ComponentMode(setting, module.settings.getSettingDef(settingName)!!, settingName, x, currentY, width)
-                1 -> ComponentSlider(setting, module.settings.getSettingDef(settingName)!!, settingName, x, currentY, width)
-                2 -> ComponentToggle(setting, module.settings.getSettingDef(settingName)!!, settingName, x, currentY, width)
-                else -> ComponentName(setting, module.settings.getSettingDef(settingName)!!, settingName, x, currentY, width)
+        if (if (ConfigManager.clickGuiPositions.positions[module.category] != null) (ConfigManager.clickGuiPositions.positions[module.category]!!).expandedModule[module.name] == true else false) {
+            var currentY = y + height
+            loop@ for ((settingName, setting) in module.settings.settings) {
+                val settingComponent = when (setting.type) {
+                    0 -> ComponentMode(setting, module.settings.getSettingDef(settingName)!!, settingName, x, currentY, width)
+                    1 -> ComponentSlider(setting, module.settings.getSettingDef(settingName)!!, settingName, x, currentY, width)
+                    2 -> ComponentToggle(setting, module.settings.getSettingDef(settingName)!!, settingName, x, currentY, width)
+                    else -> ComponentName(setting, module.settings.getSettingDef(settingName)!!, settingName, x, currentY, width)
+                }
+                currentY += settingComponent.height
+                subComponents.add(settingComponent)
             }
-            currentY += settingComponent.height
-            subComponents.add(settingComponent)
+            totalHeight = currentY - y
         }
     }
 }
