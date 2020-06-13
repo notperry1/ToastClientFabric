@@ -8,7 +8,7 @@ import toast.client.modules.config.SettingDef
  * Basic setting component
  */
 abstract class SettingComponent : Component() {
-    override fun render() = drawBox(" > ", settingName)
+    override fun render(): Unit = drawBox(" > ", settingName, false, setting.enabled ?: true)
 
     override var subComponents: ArrayList<Component> = ArrayList()
 

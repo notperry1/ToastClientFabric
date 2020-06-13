@@ -109,12 +109,14 @@ object TwoDRenderUtils {
             y: Int,
             width: Int,
             height: Int,
-            background: Boolean,
+            hover: Boolean,
+            on: Boolean,
             prefix: String?,
             text: String?
     ) {
-        val bgColor = if (background) Color(0, 0, 0, 64).rgb else Color(0, 0, 0, 0).rgb
-        drawTextBox(x, y, width, height, Color(0, 0, 0, 255).rgb, Color(255, 255, 255, 255).rgb, Color(8, 189, 8, 255).rgb, bgColor, prefix, text)
+        val bgColor = if (hover) Color(131, 212, 252, 92).rgb else Color(0, 0, 0, 64).rgb
+        val textColor = if (on) Color(255, 255, 255, 255).rgb else Color(100, 100, 100, 255).rgb
+        drawTextBox(x, y, width, height, Color(0, 0, 0, 255).rgb, textColor, Color(8, 189, 8, 255).rgb, bgColor, prefix, text)
     }
 
     /**

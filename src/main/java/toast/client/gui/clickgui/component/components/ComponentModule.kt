@@ -18,12 +18,12 @@ class ComponentModule(override var x: Double, override var y: Double, override v
     var totalHeight: Double = height
 
     override fun render() {
-        drawBox("> ", module.name)
+        drawBox("> ", module.name, false, module.enabled)
         if (ConfigManager.clickGuiPositions.positions.containsKey(module.category)) {
             if ((ConfigManager.clickGuiPositions.positions[module.category]
                             ?: return).expandedModule.containsKey(module.name)) {
-                for (module in subComponents) {
-                    module.render()
+                for (setting in subComponents) {
+                    setting.render()
                 }
             }
         }

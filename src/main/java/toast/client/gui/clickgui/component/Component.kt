@@ -73,8 +73,8 @@ abstract class Component {
     /**
      * Draws the outline and background for the component
      */
-    fun drawBox(prefix: String, text: String) {
-        renderUtils.drawTextBox(x.roundToInt(), y.roundToInt(), width.roundToInt(), height.roundToInt(), true, prefix, text)
+    fun drawBox(prefix: String, text: String, hover: Boolean, on: Boolean) {
+        renderUtils.drawTextBox(x.roundToInt(), y.roundToInt(), width.roundToInt(), height.roundToInt(), hover, on, prefix, text)
     }
 
     /**

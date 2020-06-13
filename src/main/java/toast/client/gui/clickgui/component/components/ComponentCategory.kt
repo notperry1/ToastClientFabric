@@ -18,7 +18,7 @@ class ComponentCategory(override var x: Double, override var y: Double, override
      * Renders the Category's window
      */
     override fun render() {
-        drawBox(" ", category.name)
+        drawBox(" ", category.name, hover = false, on = true)
         if (clickGuiPositions.positions.containsKey(category)) {
             if ((clickGuiPositions.positions[category] ?: return).expanded) {
                 for (module in subComponents) {
