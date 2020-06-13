@@ -2,11 +2,18 @@ package toast.client.modules.misc
 
 import com.google.common.eventbus.Subscribe
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket
+import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket
+import net.minecraft.text.LiteralText
 import toast.client.ToastClient
+import toast.client.events.network.EventPacketReceived
 import toast.client.events.network.EventPacketSent
 import toast.client.modules.Module
 import toast.client.utils.FancyChatUtil
+import toast.client.utils.FancyChatUtil.unFancy
 
+/**
+ * Module that modifies chat messages
+ */
 class CustomChat : Module("CustomChat", "Custom chat messages", Category.MISC, -1) {
     private var isMadeByCustomChat = false
     override fun onEnable() {
@@ -14,7 +21,7 @@ class CustomChat : Module("CustomChat", "Custom chat messages", Category.MISC, -
     }
 
     @Subscribe
-    fun onEvent(e: EventPacketSent) {
+    fun onSend(e: EventPacketSent) {
         if (mc.player == null) return
         if (e.getPacket() is ChatMessageC2SPacket) {
             if (!getBool("Custom Suffix")) suffix = "ᴛᴏᴀѕᴛᴄʟɪᴇɴᴛ"
@@ -29,18 +36,32 @@ class CustomChat : Module("CustomChat", "Custom chat messages", Category.MISC, -
                 }
             }
             when (settings.getMode("Separator")) {
-                "None" -> message = FancyChatUtil.customSuffix(message, " ", suffix, "", false)
-                "Default" -> message = FancyChatUtil.customSuffix(message, " | ", suffix, "", false)
-                "Brackets" -> message = FancyChatUtil.customSuffix(message, " < ", suffix, " > ", true)
+                "None" -> message += " $suffix"
+                "Default" -> message += " | $suffix"
+                "Brackets" -> message += " < $suffix > "
             }
             isMadeByCustomChat = !isMadeByCustomChat
             if (isMadeByCustomChat) return
             e.isCancelled = true
-            mc.player!!.sendChatMessage(message)
+            (mc.player ?: return).sendChatMessage(message)
+        }
+    }
+
+    @Subscribe
+    fun onRecv(e: EventPacketReceived) {
+        if (getBool("Anti Fancy")) {
+            if (e.getPacket() is ChatMessageS2CPacket) {
+                (mc.player
+                        ?: return).addChatMessage(LiteralText(unFancy((e.getPacket() as ChatMessageS2CPacket).message.toString())), false)
+                e.isCancelled = true
+            }
         }
     }
 
     companion object {
+        /**
+         * The suffix to add to messages
+         */
         @JvmField
         var suffix: String = ""
     }
@@ -51,5 +72,6 @@ class CustomChat : Module("CustomChat", "Custom chat messages", Category.MISC, -
         settings.addBoolean("Custom Suffix", false)
         settings.addMode("Separator", "None", "None", "Default", "Brackets")
         settings.addMode("Fancy chat type", "Retard", "Classic", "Retard", "Grammar", "Spaced")
+        settings.addBoolean("Anti Fancy", true)
     }
 }
