@@ -105,8 +105,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                     is ComponentMode -> {
                         val modes = component.settingDef.modes ?: break@loop
                         val mode = component.setting.mode ?: break@loop
-                        component.setting.mode = if (modes.indexOf(mode) == modes.size - 1) modes[0] else modes[modes.indexOf(mode)]
-                        println("mode clicked")
+                        component.setting.mode = if (modes.indexOf(mode) == modes.size - 1) modes[0] else modes[modes.indexOf(mode) + 1]
                     }
                 }
                 break@loop

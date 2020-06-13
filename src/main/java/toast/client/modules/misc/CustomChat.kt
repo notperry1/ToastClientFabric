@@ -52,7 +52,7 @@ class CustomChat : Module("CustomChat", "Custom chat messages", Category.MISC, -
         if (getBool("Anti Fancy")) {
             if (e.getPacket() is ChatMessageS2CPacket) {
                 (mc.player
-                        ?: return).addChatMessage(LiteralText(unFancy((e.getPacket() as ChatMessageS2CPacket).message.toString())), false)
+                        ?: return).addChatMessage(LiteralText(unFancy((e.getPacket() as ChatMessageS2CPacket).message.asFormattedString())), false)
                 e.isCancelled = true
             }
         }
@@ -72,6 +72,6 @@ class CustomChat : Module("CustomChat", "Custom chat messages", Category.MISC, -
         settings.addBoolean("Custom Suffix", false)
         settings.addMode("Separator", "None", "None", "Default", "Brackets")
         settings.addMode("Fancy chat type", "Retard", "Classic", "Retard", "Grammar", "Spaced")
-        settings.addBoolean("Anti Fancy", true)
+        settings.addBoolean("Anti Fancy", false)
     }
 }
