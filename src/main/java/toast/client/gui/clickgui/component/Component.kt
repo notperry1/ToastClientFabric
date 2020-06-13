@@ -68,7 +68,7 @@ abstract class Component {
     /**
      * Contains code to render the component
      */
-    abstract fun render()
+    abstract fun render(mouseX: Double, mouseY: Double)
 
     /**
      * Draws the outline and background for the component

@@ -17,13 +17,13 @@ class ComponentModule(override var x: Double, override var y: Double, override v
      */
     var totalHeight: Double = height
 
-    override fun render() {
-        drawBox("> ", module.name, false, module.enabled)
+    override fun render(mouseX: Double, mouseY: Double) {
+        drawBox("> ", module.name, isMouseOver(mouseX, mouseY), module.enabled)
         if (positions.containsKey(module.category)) {
             if ((positions[module.category]
                             ?: return).expandedModule.containsKey(module.name)) {
                 for (setting in subComponents) {
-                    setting.render()
+                    setting.render(mouseX, mouseY)
                 }
             }
         }

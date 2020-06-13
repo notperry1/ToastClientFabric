@@ -17,12 +17,12 @@ class ComponentCategory(override var x: Double, override var y: Double, override
     /**
      * Renders the Category's window
      */
-    override fun render() {
-        drawBox(" ", category.name, hover = false, on = true)
+    override fun render(mouseX: Double, mouseY: Double) {
+        drawBox(" ", category.name, isMouseOver(mouseX, mouseY), on = true)
         if (ClickGuiPositions.positions.containsKey(category)) {
             if ((ClickGuiPositions.positions[category] ?: return).expanded) {
                 for (module in subComponents) {
-                    module.render()
+                    module.render(mouseX, mouseY)
                 }
             }
         }

@@ -28,14 +28,14 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
     /**
      * ClickGUI state storage
      */
-    val clickGuiPositions: ClickGuiPositions = ClickGuiPositions()
+    private val clickGuiPositions: ClickGuiPositions = ClickGuiPositions()
 
     /**
      * Renders everything
      */
     override fun render(mouseX: Int, mouseY: Int, delta: Float) {
         loop@ for (category in categories) {
-            category.render()
+            category.render(mouseX.toDouble(), mouseY.toDouble())
             if (pressedOnCategory) {
                 if (catPressedOn == category.category) {
                     when {
