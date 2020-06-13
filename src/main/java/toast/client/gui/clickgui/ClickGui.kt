@@ -43,14 +43,15 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                             dragDeltaY = 0.0
                             dragDeltaX = 0.0
                         }
-                        released && !clickedOnce && !didDrag -> {
-                            (clickGuiPositions.positions[category.category]
-                                    ?: return).expanded = !(clickGuiPositions.positions[category.category]?.expanded
-                                    ?: return)
-                            released = false
-                            clickedOnce = true
-                        }
-                        released && didDrag -> {
+                        released -> {
+                            if (!clickedOnce && !didDrag) {
+                                (clickGuiPositions.positions[category.category]
+                                        ?: return).expanded = !(clickGuiPositions.positions[category.category]?.expanded
+                                        ?: return)
+                                clickedOnce = true
+                            }
+                            pressedOnCategory = false
+                            catPressedOn = null
                             didDrag = false
                             released = false
                         }
@@ -61,6 +62,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                 didDrag = false
                 released = false
                 clickedOnce = false
+                catPressedOn = null
             }
         }
     }
@@ -69,42 +71,41 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
      * Executes when mouse is clicked
      */
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        var foundCat = false
-        for (category in categories) if (category.isMouseOver(mouseX, mouseY)) {
-            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            for (category in categories) if (category.isMouseOver(mouseX, mouseY)) {
                 catPressedOn = category.category
                 pressedOnCategory = true
                 clickedOnce = false
-                foundCat = true
+                return true
             }
         }
-        if (!foundCat) {
-            loop@ for (category in categories) {
-                val component = category.getSubComponentAtCoords(mouseX, mouseY)
-                if (component != null) {
-                    when (component) {
-                        is ComponentModule -> {
-                            when (button) {
-                                GLFW.GLFW_MOUSE_BUTTON_RIGHT -> {
-                                    var state = clickGuiPositions.positions[category.category]!!.expandedModule[component.module.name]
-                                    state = if (state == null) true else !state
-                                    clickGuiPositions.positions[category.category]!!.expandedModule[component.module.name] = state
-                                    category.generatePositions()
-                                }
-                                GLFW.GLFW_MOUSE_BUTTON_LEFT -> {
-                                    component.module.toggle()
-                                }
+        pressedOnCategory = false
+        catPressedOn = null
+        loop@ for (category in categories) {
+            val component = category.getSubComponentAtCoords(mouseX, mouseY)
+            if (component != null) {
+                when (component) {
+                    is ComponentModule -> {
+                        when (button) {
+                            GLFW.GLFW_MOUSE_BUTTON_RIGHT -> {
+                                var state = clickGuiPositions.positions[category.category]!!.expandedModule[component.module.name]
+                                state = if (state == null) true else !state
+                                clickGuiPositions.positions[category.category]!!.expandedModule[component.module.name] = state
+                                category.generatePositions()
+                            }
+                            GLFW.GLFW_MOUSE_BUTTON_LEFT -> {
+                                component.module.toggle()
                             }
                         }
-                        is ComponentToggle -> {
-                            val state = component.setting.enabled ?: break@loop
-                            component.setting.enabled = !state
-                        }
-                        is ComponentMode -> {
-                            val modes = component.settingDef.modes ?: break@loop
-                            val mode = component.setting.mode ?: break@loop
-                            if (modes.indexOf(mode) == modes.size - 1) component.setting.mode = modes[0] else component.setting.mode = modes[modes.indexOf(mode)]
-                        }
+                    }
+                    is ComponentToggle -> {
+                        val state = component.setting.enabled ?: break@loop
+                        component.setting.enabled = !state
+                    }
+                    is ComponentMode -> {
+                        val modes = component.settingDef.modes ?: break@loop
+                        val mode = component.setting.mode ?: break@loop
+                        if (modes.indexOf(mode) == modes.size - 1) component.setting.mode = modes[0] else component.setting.mode = modes[modes.indexOf(mode)]
                     }
                 }
             }
