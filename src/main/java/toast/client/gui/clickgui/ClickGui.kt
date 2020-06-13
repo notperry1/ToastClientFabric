@@ -30,32 +30,37 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
     override fun render(mouseX: Int, mouseY: Int, delta: Float) {
         loop@ for (category in categories) {
             category.render()
-            if (pressedOnCategory && catPressedOn == category.category) {
-                when {
-                    mouseIsDragging -> {
-                        category.x += dragDeltaX
-                        category.y += dragDeltaY
-                        ((clickGuiPositions.positions[category.category]) ?: continue@loop).x = category.x
-                        (clickGuiPositions.positions[category.category] ?: continue@loop).y = category.y
-                        category.updateSubComponentsPos(dragDeltaX, dragDeltaY)
-                        println("Dragged ${category.category.name}")
-                        didDrag = true
-                        dragDeltaY = 0.0
-                        dragDeltaX = 0.0
-                    }
-                    released && !clickedOnce && !didDrag -> {
-                        (clickGuiPositions.positions[category.category]
-                                ?: return).expanded = !(clickGuiPositions.positions[category.category]?.expanded
-                                ?: return)
-                        released = false
-                        clickedOnce = true
-                        println("Clicked on ${category.category.name}")
-                    }
-                    released && didDrag -> {
-                        didDrag = false
-                        released = false
+            if (pressedOnCategory) {
+                if (catPressedOn == category.category) {
+                    when {
+                        mouseIsDragging -> {
+                            category.x += dragDeltaX
+                            category.y += dragDeltaY
+                            ((clickGuiPositions.positions[category.category]) ?: continue@loop).x = category.x
+                            (clickGuiPositions.positions[category.category] ?: continue@loop).y = category.y
+                            category.updateSubComponentsPos(dragDeltaX, dragDeltaY)
+                            didDrag = true
+                            dragDeltaY = 0.0
+                            dragDeltaX = 0.0
+                        }
+                        released && !clickedOnce && !didDrag -> {
+                            (clickGuiPositions.positions[category.category]
+                                    ?: return).expanded = !(clickGuiPositions.positions[category.category]?.expanded
+                                    ?: return)
+                            released = false
+                            clickedOnce = true
+                        }
+                        released && didDrag -> {
+                            didDrag = false
+                            released = false
+                        }
                     }
                 }
+            } else {
+                released = false
+                didDrag = false
+                released = false
+                clickedOnce = false
             }
         }
     }
