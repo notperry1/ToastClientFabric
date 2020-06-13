@@ -1,8 +1,8 @@
 package toast.client.gui.clickgui.component.components
 
+import toast.client.gui.clickgui.ClickGuiPositions.Companion.positions
 import toast.client.gui.clickgui.component.Component
 import toast.client.modules.Module
-import toast.client.utils.ConfigManager
 
 /**
  * GUI component to render Modules
@@ -19,8 +19,8 @@ class ComponentModule(override var x: Double, override var y: Double, override v
 
     override fun render() {
         drawBox("> ", module.name, false, module.enabled)
-        if (ConfigManager.clickGuiPositions.positions.containsKey(module.category)) {
-            if ((ConfigManager.clickGuiPositions.positions[module.category]
+        if (positions.containsKey(module.category)) {
+            if ((positions[module.category]
                             ?: return).expandedModule.containsKey(module.name)) {
                 for (setting in subComponents) {
                     setting.render()
@@ -30,7 +30,7 @@ class ComponentModule(override var x: Double, override var y: Double, override v
     }
 
     init {
-        if (if (ConfigManager.clickGuiPositions.positions[module.category] != null) (ConfigManager.clickGuiPositions.positions[module.category]!!).expandedModule[module.name] == true else false) {
+        if (if (positions[module.category] != null) (positions[module.category]!!).expandedModule[module.name] == true else false) {
             var currentY = y + height
             loop@ for ((settingName, setting) in module.settings.settings) {
                 val settingComponent = when (setting.type) {

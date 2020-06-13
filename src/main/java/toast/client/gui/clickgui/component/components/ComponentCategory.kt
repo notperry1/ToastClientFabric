@@ -1,8 +1,8 @@
 package toast.client.gui.clickgui.component.components
 
+import toast.client.gui.clickgui.ClickGuiPositions
 import toast.client.gui.clickgui.component.Component
 import toast.client.modules.Module
-import toast.client.utils.ConfigManager.Companion.clickGuiPositions
 
 /**
  * Category renderer
@@ -19,8 +19,8 @@ class ComponentCategory(override var x: Double, override var y: Double, override
      */
     override fun render() {
         drawBox(" ", category.name, hover = false, on = true)
-        if (clickGuiPositions.positions.containsKey(category)) {
-            if ((clickGuiPositions.positions[category] ?: return).expanded) {
+        if (ClickGuiPositions.positions.containsKey(category)) {
+            if ((ClickGuiPositions.positions[category] ?: return).expanded) {
                 for (module in subComponents) {
                     module.render()
                 }

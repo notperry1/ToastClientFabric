@@ -3,12 +3,13 @@ package toast.client.gui.clickgui
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.LiteralText
 import org.lwjgl.glfw.GLFW
+import toast.client.ToastClient.CONFIG_MANAGER
+import toast.client.gui.clickgui.ClickGuiPositions.Companion.positions
 import toast.client.gui.clickgui.component.components.ComponentCategory
 import toast.client.gui.clickgui.component.components.ComponentMode
 import toast.client.gui.clickgui.component.components.ComponentModule
 import toast.client.gui.clickgui.component.components.ComponentToggle
 import toast.client.modules.Module
-import toast.client.utils.ConfigManager.Companion.clickGuiPositions
 
 /**
  * Main ClickGui class, manages the GUI and its rendering
@@ -25,6 +26,11 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
     private var didDrag = false
 
     /**
+     * ClickGUI state storage
+     */
+    val clickGuiPositions: ClickGuiPositions = ClickGuiPositions()
+
+    /**
      * Renders everything
      */
     override fun render(mouseX: Int, mouseY: Int, delta: Float) {
@@ -36,8 +42,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         mouseIsDragging -> {
                             category.x += dragDeltaX
                             category.y += dragDeltaY
-                            ((clickGuiPositions.positions[category.category]) ?: continue@loop).x = category.x
-                            (clickGuiPositions.positions[category.category] ?: continue@loop).y = category.y
+                            ((positions[category.category]) ?: continue@loop).x = category.x
+                            (positions[category.category] ?: continue@loop).y = category.y
                             category.updateSubComponentsPos(dragDeltaX, dragDeltaY)
                             didDrag = true
                             dragDeltaY = 0.0
@@ -45,8 +51,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         }
                         released -> {
                             if (!clickedOnce && !didDrag) {
-                                (clickGuiPositions.positions[category.category]
-                                        ?: return).expanded = !(clickGuiPositions.positions[category.category]?.expanded
+                                (positions[category.category]
+                                        ?: return).expanded = !(positions[category.category]?.expanded
                                         ?: return)
                                 clickedOnce = true
                             }
@@ -88,24 +94,27 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                     is ComponentModule -> {
                         when (button) {
                             GLFW.GLFW_MOUSE_BUTTON_RIGHT -> {
-                                var state = clickGuiPositions.positions[category.category]!!.expandedModule[component.module.name]
+                                var state = positions[category.category]!!.expandedModule[component.module.name]
                                 state = if (state == null) true else !state
-                                clickGuiPositions.positions[category.category]!!.expandedModule[component.module.name] = state
+                                positions[category.category]!!.expandedModule[component.module.name] = state
                                 category.generatePositions()
                             }
                             GLFW.GLFW_MOUSE_BUTTON_LEFT -> {
                                 component.module.toggle()
+                                CONFIG_MANAGER.writeModules()
                             }
                         }
                     }
                     is ComponentToggle -> {
                         val state = component.setting.enabled ?: break@loop
                         component.setting.enabled = !state
+                        CONFIG_MANAGER.writeConfig()
                     }
                     is ComponentMode -> {
                         val modes = component.settingDef.modes ?: break@loop
                         val mode = component.setting.mode ?: break@loop
                         component.setting.mode = if (modes.indexOf(mode) == modes.size - 1) modes[0] else modes[modes.indexOf(mode) + 1]
+                        CONFIG_MANAGER.writeConfig()
                     }
                 }
                 break@loop
@@ -131,7 +140,10 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
      * Executes when mouse is released
      */
     override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        mouseIsDragging = false
+        if (mouseIsDragging) {
+            mouseIsDragging = false
+            clickGuiPositions.writePositions()
+        }
         dragDeltaY = 0.0
         dragDeltaX = 0.0
         released = true
@@ -140,19 +152,21 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
 
     init {
         categories.clear()
+        clickGuiPositions.loadPositions()
         var x = 5.0
         for (category in Module.Category.values()) {
             var y = 10.0
             var catX = x
-            if (clickGuiPositions.positions.containsKey(category)) {
-                catX = clickGuiPositions.positions[category]!!.x
-                y = clickGuiPositions.positions[category]!!.y
+            if (positions.containsKey(category)) {
+                catX = positions[category]!!.x
+                y = positions[category]!!.y
             } else {
-                clickGuiPositions.positions[category] = ClickGuiPositions.Position(catX, y, false, HashMap())
+                positions[category] = ClickGuiPositions.Position(catX, y, false, HashMap())
             }
             val categoryToAdd = ComponentCategory(catX, y, ArrayList(), category)
             categories.add(categoryToAdd)
             x += categoryToAdd.width + 5
         }
+        clickGuiPositions.writePositions()
     }
 }

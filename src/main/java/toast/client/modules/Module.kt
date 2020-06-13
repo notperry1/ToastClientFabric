@@ -113,9 +113,9 @@ open class Module(
      */
     enum class Category {
         /**
-         * Modules that aid the player in a none movement or combat related way
+         * Modules that aid the player in combat
          */
-        PLAYER,
+        COMBAT,
 
         /**
          * Modules that help the player move around better
@@ -123,19 +123,19 @@ open class Module(
         MOVEMENT,
 
         /**
-         * Modules that affect or add to the game's rendering
+         * Modules that aid the player in a none movement or combat related way
          */
-        RENDER,
-
-        /**
-         * Modules that aid the player in combat
-         */
-        COMBAT,
+        PLAYER,
 
         /**
          * Modules that don't fit into any of the other categories
          */
-        MISC
+        MISC,
+
+        /**
+         * Modules that affect or add to the game's rendering
+         */
+        RENDER
     }
 
     init {
