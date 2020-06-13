@@ -81,16 +81,12 @@ abstract class Component {
      * Function to get the component at a coordinate on screen
      */
     fun getSubComponentAtCoords(x: Double, y: Double): Component? {
-        var answer: Component? = null
+        for (comp in subComponents) if (comp.isMouseOver(x, y)) return comp
         for (comp in subComponents) {
-            if (x >= comp.x && y >= comp.y && x <= comp.x + comp.width && y <= comp.y + comp.height) {
-                answer = comp
-            }
+            val subComp: Component? = comp.getSubComponentAtCoords(x, y)
+            if (subComp != null) return subComp
         }
-        if (answer == null) {
-            for (comp in subComponents) answer = comp.getSubComponentAtCoords(x, y)
-        }
-        return answer
+        return null
     }
 
     /**
