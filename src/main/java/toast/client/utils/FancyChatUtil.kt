@@ -176,7 +176,7 @@ object FancyChatUtil {
     fun unFancy(s: String): String {
         var noFancyString = ""
         for (c in s) {
-            noFancyString += if (c.toInt() in 65281..65375) c - 0xFEE0 else c
+            noFancyString += if (c.toInt() in 0xFF01..0xFF5E) c - 0xFEE0 else c
             // https://en.wikipedia.org/wiki/Halfwidth_and_Fullwidth_Forms_(Unicode_block)
             // later? https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
         }
