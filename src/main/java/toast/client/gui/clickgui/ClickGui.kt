@@ -29,6 +29,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
      * ClickGUI state storage
      */
     private val clickGuiPositions: ClickGuiPositions = ClickGuiPositions()
+    private var posMap: LinkedHashMap<Module.Category, ClickGuiPositions.Position> = LinkedHashMap()
 
     /**
      * Renders everything
@@ -51,9 +52,15 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         }
                         released -> {
                             if (!clickedOnce && !didDrag) {
+                                posMap = positions
+                                var catExp = (positions[category.category]
+                                        ?: break@loop).expanded
+                                println(catExp)
                                 (positions[category.category]
-                                        ?: return).expanded = !(positions[category.category]?.expanded
-                                        ?: return)
+                                        ?: break@loop).expanded = !catExp
+                                catExp = (positions[category.category]
+                                        ?: break@loop).expanded
+                                println(catExp)
                                 clickedOnce = true
                             }
                             pressedOnCategory = false
@@ -69,6 +76,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                 released = false
                 clickedOnce = false
                 catPressedOn = null
+                dragDeltaY = 0.0
+                dragDeltaX = 0.0
             }
         }
     }
