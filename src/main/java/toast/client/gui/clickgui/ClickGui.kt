@@ -29,7 +29,6 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
      * ClickGUI state storage
      */
     private val clickGuiPositions: ClickGuiPositions = ClickGuiPositions()
-    private var posMap: LinkedHashMap<Module.Category, ClickGuiPositions.Position> = LinkedHashMap()
 
     /**
      * Renders everything
@@ -52,15 +51,9 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         }
                         released -> {
                             if (!clickedOnce && !didDrag) {
-                                posMap = positions
-                                var catExp = (positions[category.category]
-                                        ?: break@loop).expanded
-                                println(catExp)
                                 (positions[category.category]
-                                        ?: break@loop).expanded = !catExp
-                                catExp = (positions[category.category]
+                                        ?: break@loop).expanded = (positions[category.category]
                                         ?: break@loop).expanded
-                                println(catExp)
                                 clickedOnce = true
                             }
                             pressedOnCategory = false

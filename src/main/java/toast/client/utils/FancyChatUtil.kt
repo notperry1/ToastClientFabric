@@ -1,8 +1,6 @@
 package toast.client.utils
 
 import java.util.*
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 /**
  * Utility for formatting strings
@@ -52,11 +50,7 @@ object FancyChatUtil {
      * Converts normal letters into Small Capitals
      */
     fun classicFancy(text: String): String {
-        val letters = classicLetters
-        val finalString = StringBuilder()
-        for (letter in text.split("".toRegex()).toTypedArray()) finalString.append(if (letter == " ") " " else letters[letter]
-                ?: letter)
-        return finalString.toString()
+        return toFancy(text)
     }
 
     /**
@@ -69,117 +63,28 @@ object FancyChatUtil {
         return finalString.toString()
     }
 
-    private val classicLetters: Map<String, String>
-        get() = // TODO: find a easier way to do this
-            Stream.of(
-                    arrayOf("0", "０"),
-                    arrayOf("1", "１"),
-                    arrayOf("2", "２"),
-                    arrayOf("3", "３"),
-                    arrayOf("4", "４"),
-                    arrayOf("5", "５"),
-                    arrayOf("6", "６"),
-                    arrayOf("7", "７"),
-                    arrayOf("8", "８"),
-                    arrayOf("9", "９"),
-                    arrayOf("A", "Ａ"),
-                    arrayOf("B", "Ｂ"),
-                    arrayOf("C", "Ｃ"),
-                    arrayOf("D", "Ｄ"),
-                    arrayOf("E", "Ｅ"),
-                    arrayOf("F", "Ｆ"),
-                    arrayOf("G", "Ｇ"),
-                    arrayOf("H", "Ｈ"),
-                    arrayOf("I", "Ｉ"),
-                    arrayOf("J", "Ｊ"),
-                    arrayOf("K", "Ｋ"),
-                    arrayOf("L", "Ｌ"),
-                    arrayOf("M", "Ｍ"),
-                    arrayOf("N", "Ｎ"),
-                    arrayOf("O", "Ｏ"),
-                    arrayOf("P", "Ｐ"),
-                    arrayOf("Q", "Ｑ"),
-                    arrayOf("R", "Ｒ"),
-                    arrayOf("S", "Ｓ"),
-                    arrayOf("T", "Ｔ"),
-                    arrayOf("U", "Ｕ"),
-                    arrayOf("V", "Ｖ"),
-                    arrayOf("W", "Ｗ"),
-                    arrayOf("X", "Ｘ"),
-                    arrayOf("Y", "Ｙ"),
-                    arrayOf("Z", "Ｚ"),
-                    arrayOf("a", "ａ"),
-                    arrayOf("b", "ｂ"),
-                    arrayOf("c", "ｃ"),
-                    arrayOf("d", "ｄ"),
-                    arrayOf("e", "ｅ"),
-                    arrayOf("f", "ｆ"),
-                    arrayOf("g", "ｇ"),
-                    arrayOf("h", "ｈ"),
-                    arrayOf("i", "ｉ"),
-                    arrayOf("j", "ｊ"),
-                    arrayOf("k", "ｋ"),
-                    arrayOf("l", "ｌ"),
-                    arrayOf("m", "ｍ"),
-                    arrayOf("n", "ｎ"),
-                    arrayOf("o", "ｏ"),
-                    arrayOf("p", "ｐ"),
-                    arrayOf("q", "ｑ"),
-                    arrayOf("r", "ｒ"),
-                    arrayOf("s", "ｓ"),
-                    arrayOf("t", "ｔ"),
-                    arrayOf("u", "ｕ"),
-                    arrayOf("v", "ｖ"),
-                    arrayOf("w", "ｗ"),
-                    arrayOf("x", "ｘ"),
-                    arrayOf("y", "ｙ"),
-                    arrayOf("z", "ｚ"),
-                    arrayOf("!", "！"),
-                    arrayOf("\"", "＂"),
-                    arrayOf("#", "＃"),
-                    arrayOf("$", "＄"),
-                    arrayOf("%", "％"),
-                    arrayOf("&", "＆"),
-                    arrayOf("'", "＇"),
-                    arrayOf("(", "（"),
-                    arrayOf(")", "）"),
-                    arrayOf("*", "＊"),
-                    arrayOf("+", "＋"),
-                    arrayOf(",", "，"),
-                    arrayOf("-", "－"),
-                    arrayOf(".", "．"),
-                    arrayOf("/", "／"),
-                    arrayOf(":", "："),
-                    arrayOf(";", "；"),
-                    arrayOf("<", "＜"),
-                    arrayOf("=", "＝"),
-                    arrayOf(">", "＞"),
-                    arrayOf("?", "？"),
-                    arrayOf("@", "＠"),
-                    arrayOf("[", "［"),
-                    arrayOf("\\", "＼"),
-                    arrayOf("]", "］"),
-                    arrayOf("^", "＾"),
-                    arrayOf("_", "＿"),
-                    arrayOf("`", "｀"),
-                    arrayOf("{", "｛"),
-                    arrayOf("|", "｜"),
-                    arrayOf("}", "｝"),
-                    arrayOf("~", "～")
-            ).collect(Collectors.toMap(
-                    { data: Array<String> -> data[0] },
-                    { data: Array<String> -> data[1] }))
+    // https://en.wikipedia.org/wiki/Halfwidth_and_Fullwidth_Forms_(Unicode_block)
+    // later? https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
 
     /**
-     * Turns a string of Small Capitals into normal letters
+     * Turns a string of fullwidth letters into normal letters
      */
     fun unFancy(s: String): String {
         var noFancyString = ""
         for (c in s) {
             noFancyString += if (c.toInt() in 0xFF01..0xFF5E) c - 0xFEE0 else c
-            // https://en.wikipedia.org/wiki/Halfwidth_and_Fullwidth_Forms_(Unicode_block)
-            // later? https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
         }
         return noFancyString
+    }
+
+    /**
+     * Turns a string of normal letters into a string of fullwidth letters
+     */
+    private fun toFancy(s: String): String {
+        var fancyString = ""
+        for (c in s) {
+            fancyString += if (c.toInt() in 0x21..0x7E) c + 0xFEE0 else c
+        }
+        return fancyString
     }
 }

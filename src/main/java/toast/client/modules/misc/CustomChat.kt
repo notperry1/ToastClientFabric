@@ -30,6 +30,7 @@ class CustomChat : Module("CustomChat", "Custom chat messages", Category.MISC, -
             if (packetMessage.startsWith(ToastClient.cmdPrefix) || packetMessage.startsWith("/") && !getBool("Commands")) return
             if (getBool("Fancy Chat")) {
                 when (settings.getMode("Fancy chat type")) {
+                    "Rainbow" -> message = FancyChatUtil.rainbowText(packetMessage)
                     "Classic" -> message = FancyChatUtil.classicFancy(packetMessage)
                     "Retard" -> message = FancyChatUtil.retardChat(packetMessage)
                     "Spaced" -> message = FancyChatUtil.spaces(packetMessage)
@@ -71,7 +72,7 @@ class CustomChat : Module("CustomChat", "Custom chat messages", Category.MISC, -
         settings.addBoolean("Commands", false)
         settings.addBoolean("Custom Suffix", false)
         settings.addMode("Separator", "None", "None", "Default", "Brackets")
-        settings.addMode("Fancy chat type", "Retard", "Classic", "Retard", "Grammar", "Spaced")
+        settings.addMode("Fancy chat type", "Classic", "Classic", "Retard", "Rainbow", "Spaced")
         settings.addBoolean("Anti Fancy", false)
     }
 }

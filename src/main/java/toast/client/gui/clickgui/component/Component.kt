@@ -43,7 +43,7 @@ abstract class Component {
     /**
      * Height of text in the gui
      */
-    private val textHeight: Int = mc.textRenderer.fontHeight
+    protected val textHeight: Int = mc.textRenderer.fontHeight
 
     /**
      * Height of the text in the GUI + padding
@@ -58,7 +58,7 @@ abstract class Component {
     /**
      * Shorthand accessor for the 2D render utilities
      */
-    private val renderUtils: TwoDRenderUtils = TwoDRenderUtils
+    protected val renderUtils: TwoDRenderUtils = TwoDRenderUtils
 
     /**
      * Shorthand accessor for the 2D render utilities

@@ -1,6 +1,5 @@
 package toast.client.gui.clickgui.component.components
 
-import toast.client.gui.clickgui.ClickGuiPositions
 import toast.client.gui.clickgui.ClickGuiPositions.Companion.positions
 import toast.client.gui.clickgui.component.Component
 import toast.client.modules.Module
@@ -14,17 +13,14 @@ class ComponentCategory(override var x: Double, override var y: Double, override
                          */
                         var category: Module.Category) : Component() {
     override var width: Double = 0.0
-    private var poses: LinkedHashMap<Module.Category, ClickGuiPositions.Position> = LinkedHashMap()
 
     /**
      * Renders the Category's window
      */
     override fun render(mouseX: Double, mouseY: Double) {
-        poses = positions
         drawBox(" ", category.name, isMouseOver(mouseX, mouseY), on = true)
         if (positions.containsKey(category)) {
             (positions[category] ?: return).expanded
-            println("test")
             if ((positions[category] ?: return).expanded) {
                 for (module in subComponents) {
                     module.render(mouseX, mouseY)
