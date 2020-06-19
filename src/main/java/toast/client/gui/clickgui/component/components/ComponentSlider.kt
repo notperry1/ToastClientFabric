@@ -22,7 +22,10 @@ class ComponentSlider(override var setting: Setting, override var settingDef: Se
         drawBox(" > ", "$settingName: ${setting.value}", isMouseOver(mouseX, mouseY), setting.enabled ?: true)
         TwoDRenderUtils.drawText("${settingDef.minValue}", (x + 4).roundToInt(), (y + height / 2 + 2).roundToInt(), tColor)
         TwoDRenderUtils.drawText("${settingDef.maxValue}", (x + maxValX).roundToInt(), (y + height / 2 + 2).roundToInt(), tColor)
+        val barY = (y + height / 2 + textHeight / 2 + 1).roundToInt()
         renderUtils.drawRect((x + barX).roundToInt(), (y + height / 2 + textHeight / 2 + 1).roundToInt(), barLength, 2, Color(255, 255, 255, 255).rgb)
+        renderUtils.drawRect((x + barX + (((setting.value?.div((settingDef.maxValue
+                ?: return)))?.times(barLength) ?: return))).roundToInt(), barY - 3, 4, 8, Color(255, 255, 255, 255).rgb)
     }
 
     init {
