@@ -97,11 +97,11 @@ abstract class Component {
     /**
      * Updates the X and Y positions of all subcomponents
      */
-    fun updateSubComponentsPos(deltaX: Double, deltaY: Double) {
+    fun updateSubComponentsPos(newPos: Pair<Double, Double>) {
         for (comp in subComponents) {
-            comp.x += deltaX
-            comp.y += deltaY
-            comp.updateSubComponentsPos(deltaX, deltaY)
+            comp.x += newPos.first
+            comp.y += newPos.second
+            comp.updateSubComponentsPos(newPos)
         }
     }
 }

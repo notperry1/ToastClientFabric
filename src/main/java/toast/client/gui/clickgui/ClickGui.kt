@@ -20,8 +20,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
     private var released = false
     private var didDrag = false
     private var pressedSlider: ComponentSlider? = null
-    private var clickRelX = 0.0
-    private var clickRelY = 0.0
+    private var clickRel: Pair<Double, Double> = Pair(0.0, 0.0)
 
     /**
      * ClickGUI state storage
@@ -38,11 +37,13 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                 if (catPressedOn == category.category) {
                     when {
                         mouseIsDragging -> {
-                            category.x = mouseX - clickRelX
-                            category.y = mouseY - clickRelY
+                            val oldCatPos: Pair<Double, Double> = Pair(category.x, category.y)
+                            category.x = mouseX - clickRel.first
+                            category.y = mouseY - clickRel.second
+                            val delta: Pair<Double, Double> = Pair(category.x - oldCatPos.first, category.y - oldCatPos.second)
                             ((positions[category.category]) ?: continue@loop).x = category.x
                             (positions[category.category] ?: continue@loop).y = category.y
-                            category.updateSubComponentsPos(mouseX - clickRelX, mouseX - clickRelY)
+                            category.updateSubComponentsPos(delta)
                             didDrag = true
                         }
                         released -> {
@@ -85,8 +86,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             for (category in categories) if (category.isMouseOver(mouseX, mouseY)) {
                 catPressedOn = category.category
-                clickRelX = mouseX - category.x
-                clickRelY = mouseY - category.y
+                clickRel = Pair(mouseX - category.x, mouseY - category.y)
                 pressedOnCategory = true
                 clickedOnce = false
                 return true
@@ -152,8 +152,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
             mouseIsDragging = false
             clickGuiPositions.writePositions()
         }
-        clickRelY = 0.0
-        clickRelX = 0.0
+        clickRel = Pair(0.0, 0.0)
         released = true
         pressedSlider = null
         return true
