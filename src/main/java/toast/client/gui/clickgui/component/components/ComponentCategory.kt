@@ -34,22 +34,26 @@ class ComponentCategory(override var x: Double, override var y: Double, override
      */
     fun generatePositions() {
         subComponents.clear()
-        width = mc.textRenderer.getStringWidth(category.name) + 8.0
+        width = 0.0
         for (module in mM.getModulesInCategory(category)) {
-            val modNameWidth: Int = mc.textRenderer.getStringWidth("""> ${module.name}""") + 8
-            if (modNameWidth > width) width = modNameWidth.toDouble()
+            val modNameWidth: Int = mc.textRenderer.getStringWidth(module.name)
+            if (modNameWidth > width) width += modNameWidth.toDouble() - width
             for (settingName in module.settings.settingsDef.keys) {
-                var settingNameWidth: Int = mc.textRenderer.getStringWidth(""" > $settingName""") + 8
+                var settingNameWidth: Double = mc.textRenderer.getStringWidth(""" $settingName""").toDouble()
                 val type = (module.settings.settings[settingName] ?: continue).type
-                if (type == 0 || type == 1) {
+                var suffix = 0.0
+                if (type == 0) {
                     for (mode in (module.settings.settingsDef[settingName] ?: continue).modes ?: continue) {
-                        val modeWidth = mc.textRenderer.getStringWidth(""" > $settingName: ${if (type == 0) mode else "000.00"}""") + 8
-                        settingNameWidth = modeWidth
+                        val modeWidth = mc.textRenderer.getStringWidth(""": $mode""").toDouble()
+                        if (modeWidth > suffix) suffix = modeWidth
                     }
                 }
-                if (settingNameWidth > width) width = settingNameWidth.toDouble()
+                if (suffix == 0.0 && type == 1) suffix = mc.textRenderer.getStringWidth(": 000.00").toDouble() // TODO: make this dynamic
+                settingNameWidth += suffix
+                if (settingNameWidth > width) width += settingNameWidth - width
             }
         }
+        width += 8.0 + mc.textRenderer.getStringWidth("> ")
         var currentY = y + height
         for (module in mM.getModulesInCategory(category)) {
             val newModuleComponent = ComponentModule(x, currentY, ArrayList(), module, width)

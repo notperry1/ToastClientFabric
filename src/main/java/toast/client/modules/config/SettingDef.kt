@@ -46,6 +46,6 @@ class SettingDef {
     /**
      * Type of the setting
      */
-    val type: String
-        get() = (if (modes != null) "mode" else if (minValue != null && maxValue != null) "value" else if (isBool) "boolean" else null) as String
+    val type: Int?
+        get() = (if (modes != null) 0 else if (minValue != null && maxValue != null) 1 else if (isBool) 2 else null)
 }

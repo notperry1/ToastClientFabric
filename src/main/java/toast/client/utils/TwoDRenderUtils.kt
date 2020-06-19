@@ -118,34 +118,4 @@ object TwoDRenderUtils {
         val textColor = if (on) Color(255, 255, 255, 255).rgb else Color(100, 100, 100, 255).rgb
         drawTextBox(x, y, width, height, Color(0, 0, 0, 255).rgb, textColor, Color(8, 189, 8, 255).rgb, bgColor, prefix, text)
     }
-
-    /**
-     * Check if the mouse if over a box on screen
-     *
-     * @param mouseX Current X coordinate of the mouse
-     * @param mouseY Current Y coordinate of the mouse
-     * @param x      X coordinate of the top left corner of the inside of the text box
-     * @param y      Y coordinate of the top left corner of the inside of the text box
-     * @param width  Width of the inside of the box
-     * @param height Height of the inside of the box
-     */
-    @JvmStatic
-    fun isMouseOverRect(
-            mouseX: Double,
-            mouseY: Double,
-            x: Double,
-            y: Double,
-            width: Int,
-            height: Int
-    ): Boolean {
-        var xOver = false
-        var yOver = false
-        if (mouseX >= x && mouseX <= width + x) {
-            xOver = true
-        }
-        if (mouseY >= y && mouseY <= height + y) {
-            yOver = true
-        }
-        return xOver && yOver
-    }
 }
