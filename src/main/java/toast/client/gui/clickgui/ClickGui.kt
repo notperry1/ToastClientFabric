@@ -4,9 +4,11 @@ import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.LiteralText
 import org.lwjgl.glfw.GLFW
 import toast.client.ToastClient.CONFIG_MANAGER
+import toast.client.ToastClient.MODULE_MANAGER
 import toast.client.gui.clickgui.ClickGuiPositions.Companion.positions
 import toast.client.gui.clickgui.component.components.*
 import toast.client.modules.Module
+import toast.client.modules.render.ClickGui
 
 /**
  * Main ClickGui class, manages the GUI and its rendering
@@ -176,5 +178,25 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
             x += categoryToAdd.width + 5
         }
         clickGuiPositions.writePositions()
+    }
+
+    override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        return if (keyCode == 256 && shouldCloseOnEsc()) {
+            onClose()
+            true
+        } else if (keyCode == 258) {
+            val notShifting = !hasShiftDown()
+            if (!changeFocus(notShifting)) {
+                changeFocus(notShifting)
+            }
+            true
+        } else {
+            super.keyPressed(keyCode, scanCode, modifiers)
+        }
+    }
+
+    override fun onClose() {
+        MODULE_MANAGER.getModule("ClickGui")?.disable()
+        minecraft!!.openScreen(null as Screen?)
     }
 }
