@@ -61,7 +61,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         }
                     }
                 }
-            } else if (pressedSlider != null && mouseIsDragging) {
+            } else if (mouseIsDragging && pressedSlider != null) {
                 val slider = pressedSlider ?: continue@loop
                 val mousePosPercentage = ((mouseX - (slider.x + slider.barX) / (slider.settingDef.maxValue
                         ?: continue@loop) - (slider.settingDef.minValue
@@ -159,6 +159,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
         dragDeltaY = 0.0
         dragDeltaX = 0.0
         released = true
+        pressedSlider = null
         return true
     }
 
