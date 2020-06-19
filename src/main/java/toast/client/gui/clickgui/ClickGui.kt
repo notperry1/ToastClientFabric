@@ -5,10 +5,7 @@ import net.minecraft.text.LiteralText
 import org.lwjgl.glfw.GLFW
 import toast.client.ToastClient.CONFIG_MANAGER
 import toast.client.gui.clickgui.ClickGuiPositions.Companion.positions
-import toast.client.gui.clickgui.component.components.ComponentCategory
-import toast.client.gui.clickgui.component.components.ComponentMode
-import toast.client.gui.clickgui.component.components.ComponentModule
-import toast.client.gui.clickgui.component.components.ComponentToggle
+import toast.client.gui.clickgui.component.components.*
 import toast.client.modules.Module
 
 /**
@@ -24,6 +21,7 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
     private var clickedOnce = false
     private var released = false
     private var didDrag = false
+    private var pressedSlider: ComponentSlider? = null
 
     /**
      * ClickGUI state storage
@@ -52,8 +50,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         released -> {
                             if (!clickedOnce && !didDrag) {
                                 (positions[category.category]
-                                        ?: break@loop).expanded = (positions[category.category]
-                                        ?: break@loop).expanded
+                                        ?: continue@loop).expanded = !(positions[category.category]
+                                        ?: continue@loop).expanded
                                 clickedOnce = true
                             }
                             pressedOnCategory = false
@@ -63,6 +61,15 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         }
                     }
                 }
+            } else if (pressedSlider != null && mouseIsDragging) {
+                val slider = pressedSlider ?: continue@loop
+                val mousePosPercentage = ((mouseX - (slider.x + slider.barX) / (slider.settingDef.maxValue
+                        ?: continue@loop) - (slider.settingDef.minValue
+                        ?: continue@loop)) * slider.barLength)
+                slider.setting.value = ((slider.settingDef.minValue?.plus((slider.settingDef.maxValue
+                        ?: continue@loop)))?.div(100)
+                        ?: continue@loop) * mousePosPercentage + (slider.settingDef.minValue ?: continue@loop)
+                didDrag = true
             } else {
                 released = false
                 didDrag = false
@@ -117,6 +124,9 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         val mode = component.setting.mode ?: break@loop
                         component.setting.mode = if (modes.indexOf(mode) == modes.size - 1) modes[0] else modes[modes.indexOf(mode) + 1]
                         CONFIG_MANAGER.writeConfig()
+                    }
+                    is ComponentSlider -> {
+                        pressedSlider = component
                     }
                 }
                 break@loop
