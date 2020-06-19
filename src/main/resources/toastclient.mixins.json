@@ -3,6 +3,7 @@
   "package": "toast.client.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinChatScreen",
     "MixinClientConnection",
     "MixinClientPlayerEntity",
     "MixinClientPlayerInteractionManager",
