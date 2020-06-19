@@ -15,13 +15,13 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
     private var categories: ArrayList<ComponentCategory> = ArrayList()
     private var pressedOnCategory = false
     private var catPressedOn: Module.Category? = null
-    private var dragDeltaX = 0.0
-    private var dragDeltaY = 0.0
     private var mouseIsDragging = false
     private var clickedOnce = false
     private var released = false
     private var didDrag = false
     private var pressedSlider: ComponentSlider? = null
+    private var clickRelX = 0.0
+    private var clickRelY = 0.0
 
     /**
      * ClickGUI state storage
@@ -38,14 +38,12 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                 if (catPressedOn == category.category) {
                     when {
                         mouseIsDragging -> {
-                            category.x += dragDeltaX
-                            category.y += dragDeltaY
+                            category.x = mouseX - clickRelX
+                            category.y = mouseY - clickRelY
                             ((positions[category.category]) ?: continue@loop).x = category.x
                             (positions[category.category] ?: continue@loop).y = category.y
-                            category.updateSubComponentsPos(dragDeltaX, dragDeltaY)
+                            category.updateSubComponentsPos(mouseX - clickRelX, mouseX - clickRelY)
                             didDrag = true
-                            dragDeltaY = 0.0
-                            dragDeltaX = 0.0
                         }
                         released -> {
                             if (!clickedOnce && !didDrag) {
@@ -76,8 +74,6 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                 released = false
                 clickedOnce = false
                 catPressedOn = null
-                dragDeltaY = 0.0
-                dragDeltaX = 0.0
             }
         }
     }
@@ -89,6 +85,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             for (category in categories) if (category.isMouseOver(mouseX, mouseY)) {
                 catPressedOn = category.category
+                clickRelX = mouseX - category.x
+                clickRelY = mouseY - category.y
                 pressedOnCategory = true
                 clickedOnce = false
                 return true
@@ -140,8 +138,6 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
      */
     override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            dragDeltaX = deltaX
-            dragDeltaY = deltaY
             mouseIsDragging = true
             didDrag = true
         }
@@ -156,8 +152,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
             mouseIsDragging = false
             clickGuiPositions.writePositions()
         }
-        dragDeltaY = 0.0
-        dragDeltaX = 0.0
+        clickRelY = 0.0
+        clickRelX = 0.0
         released = true
         pressedSlider = null
         return true
