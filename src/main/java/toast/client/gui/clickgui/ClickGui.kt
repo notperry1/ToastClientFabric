@@ -42,7 +42,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                             val oldCatPos: Pair<Double, Double> = Pair(category.x, category.y)
                             category.x = mouseX - clickRel.first
                             category.y = mouseY - clickRel.second
-                            val delta: Pair<Double, Double> = Pair(category.x - oldCatPos.first, category.y - oldCatPos.second)
+                            val delta: Pair<Double, Double> =
+                                Pair(category.x - oldCatPos.first, category.y - oldCatPos.second)
                             ((positions[category.category]) ?: continue@loop).x = category.x
                             (positions[category.category] ?: continue@loop).y = category.y
                             category.updateSubComponentsPos(delta)
@@ -51,8 +52,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                         released -> {
                             if (!clickedOnce && !didDrag) {
                                 (positions[category.category]
-                                        ?: continue@loop).expanded = !(positions[category.category]
-                                        ?: continue@loop).expanded
+                                    ?: continue@loop).expanded = !(positions[category.category]
+                                    ?: continue@loop).expanded
                                 clickedOnce = true
                             }
                             pressedOnCategory = false
@@ -64,12 +65,10 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                 }
             } else if (mouseIsDragging && pressedSlider != null) {
                 val slider = pressedSlider ?: continue@loop
-                val mousePosPercentage = ((mouseX - (slider.x + slider.barX) / (slider.settingDef.maxValue
-                        ?: continue@loop) - (slider.settingDef.minValue
-                        ?: continue@loop)) * slider.barLength)
-                slider.setting.value = ((slider.settingDef.minValue?.plus((slider.settingDef.maxValue
-                        ?: continue@loop)))?.div(100)
-                        ?: continue@loop) * mousePosPercentage + (slider.settingDef.minValue ?: continue@loop)
+                val mousePosPercentage =
+                    (mouseX - slider.barX - slider.x) / mouseX * slider.barLength
+                slider.setting.value =
+                    mousePosPercentage / slider.barLength * (slider.settingDef.maxValue!! - slider.settingDef.minValue!!)
                 didDrag = true
             } else {
                 released = false
@@ -122,7 +121,8 @@ class ClickGui : Screen(LiteralText("ClickGui")) {
                     is ComponentMode -> {
                         val modes = component.settingDef.modes ?: break@loop
                         val mode = component.setting.mode ?: break@loop
-                        component.setting.mode = if (modes.indexOf(mode) == modes.size - 1) modes[0] else modes[modes.indexOf(mode) + 1]
+                        component.setting.mode =
+                            if (modes.indexOf(mode) == modes.size - 1) modes[0] else modes[modes.indexOf(mode) + 1]
                         CONFIG_MANAGER.writeConfig()
                     }
                     is ComponentSlider -> {
